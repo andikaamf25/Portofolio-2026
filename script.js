@@ -1,5 +1,6 @@
 const menuToggle = document.querySelector(".menu-toggle");
 const navLinks = document.querySelector(".nav-links");
+const navClose = document.querySelector(".nav-close");
 const currentYear = document.querySelector("#current-year");
 const typingFirstLine = document.querySelector(".typing-first-line");
 const typingSecondLine = document.querySelector(".typing-second-line");
@@ -15,7 +16,6 @@ const closeMenu = () => {
 
   menuToggle.setAttribute("aria-expanded", "false");
   menuToggle.setAttribute("aria-label", "Buka navigasi");
-  menuToggle.innerHTML = '<i class="fa-solid fa-bars" aria-hidden="true"></i>';
   navLinks.classList.remove("is-open");
   document.body.classList.remove("menu-open");
 };
@@ -70,11 +70,16 @@ if (menuToggle && navLinks) {
 
     menuToggle.setAttribute("aria-expanded", "true");
     menuToggle.setAttribute("aria-label", "Tutup navigasi");
-    menuToggle.innerHTML =
-      '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
     navLinks.classList.add("is-open");
     document.body.classList.add("menu-open");
   });
+
+  if (navClose) {
+    navClose.addEventListener("click", (event) => {
+      event.preventDefault();
+      closeMenu();
+    });
+  }
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -83,23 +88,32 @@ if (menuToggle && navLinks) {
   });
 }
 
+const handleInternalNavigation = (event) => {
+  const link = event.currentTarget;
+  const hash = link.getAttribute("href") ?? "";
+
+  if (!hash.startsWith("#")) {
+    return;
+  }
+
+  const target = document.querySelector(hash);
+
+  if (!target) {
+    return;
+  }
+
+  event.preventDefault();
+
+  if (navLinks?.contains(link)) {
+    closeMenu();
+  }
+
+  history.pushState(null, "", hash);
+  scrollToSection(target);
+};
+
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
-  link.addEventListener("click", (event) => {
-    const target = document.querySelector(link.hash);
-
-    if (!target) {
-      return;
-    }
-
-    event.preventDefault();
-
-    if (navLinks?.contains(link)) {
-      closeMenu();
-    }
-
-    history.pushState(null, "", link.hash);
-    scrollToSection(target);
-  });
+  link.addEventListener("click", handleInternalNavigation);
 });
 
 if (currentYear) {
