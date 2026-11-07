@@ -1,6 +1,5 @@
 const menuToggle = document.querySelector(".menu-toggle");
 const navLinks = document.querySelector(".nav-links");
-const navClose = document.querySelector(".nav-close");
 const currentYear = document.querySelector("#current-year");
 const typingFirstLine = document.querySelector(".typing-first-line");
 const typingSecondLine = document.querySelector(".typing-second-line");
@@ -73,13 +72,6 @@ if (menuToggle && navLinks) {
     navLinks.classList.add("is-open");
     document.body.classList.add("menu-open");
   });
-
-  if (navClose) {
-    navClose.addEventListener("click", (event) => {
-      event.preventDefault();
-      closeMenu();
-    });
-  }
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
