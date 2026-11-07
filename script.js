@@ -4,6 +4,8 @@ const currentYear = document.querySelector("#current-year");
 const typingFirstLine = document.querySelector(".typing-first-line");
 const typingSecondLine = document.querySelector(".typing-second-line");
 const typingCursor = document.querySelector(".typing-cursor");
+const certificateGrid = document.querySelector("#certificate-grid");
+const certificatePagination = document.querySelector(".certificate-pagination");
 let scrollAnimationFrame = 0;
 
 const closeMenu = () => {
@@ -102,6 +104,51 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
 if (currentYear) {
   currentYear.textContent = String(new Date().getFullYear());
+}
+
+if (certificateGrid && certificatePagination) {
+  const certificates = Array.from(
+    certificateGrid.querySelectorAll(".certificate-card"),
+  );
+  const pageSize = 3;
+  const totalPages = Math.ceil(certificates.length / pageSize);
+  const pageStatus = certificatePagination.querySelector(
+    ".certificate-page-status",
+  );
+  const pageButtons = certificatePagination.querySelectorAll(
+    ".certificate-page-button",
+  );
+  let currentPage = 1;
+
+  if (pageStatus && pageButtons.length === 2) {
+    certificatePagination.hidden = totalPages <= 1;
+
+    const showPage = () => {
+      const firstCertificate = (currentPage - 1) * pageSize;
+
+      certificates.forEach((certificate, index) => {
+        certificate.hidden =
+          index < firstCertificate || index >= firstCertificate + pageSize;
+      });
+
+      pageStatus.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+      pageButtons[0].disabled = currentPage === 1;
+      pageButtons[1].disabled = currentPage === totalPages;
+    };
+
+    pageButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const pageStep = Number(button.getAttribute("data-page-step"));
+        currentPage = Math.min(
+          totalPages,
+          Math.max(1, currentPage + pageStep),
+        );
+        showPage();
+      });
+    });
+
+    showPage();
+  }
 }
 
 if (typingFirstLine && typingSecondLine && typingCursor) {
